@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>India EMEA Stack Ranking — FY2027</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  :root {
+    --blue:#1565C0;--blue-lt:#E3F2FD;--orange:#E65100;--orange-lt:#FFF3E0;
+    --green:#1B5E20;--green-lt:#E8F5E9;--red:#B71C1C;--red-lt:#FFEBEE;
+    --gold:#F9A825;--silver:#9E9E9E;--bronze:#6D4C41;
+    --bg:#F5F7FA;--card:#fff;--border:#E0E0E0;--text:#212121;--muted:#757575;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+  /* Header */
+  .header{background:linear-gradient(135deg,#0D47A1 0%,#1565C0 60%,#1976D2 100%);
+    color:#fff;padding:18px 28px;display:flex;align-items:center;justify-content:space-between;
+    box-shadow:0 2px 8px rgba(0,0,0,.25)}
+  .header h1{font-size:1.4rem;font-weight:700;letter-spacing:-.3px}
+  .header .sub{font-size:.78rem;opacity:.85;margin-top:3px}
+  .badge{background:rgba(255,255,255,.18);border-radius:20px;padding:4px 12px;font-size:.75rem;
+    display:inline-flex;align-items:center;gap:6px}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+  .dot-green{background:#69F0AE}.dot-yellow{background:#FFD740}
+  /* Layout */
+  .layout{display:flex;height:calc(100vh - 62px);overflow:hidden}
+  .sidebar{width:240px;min-width:200px;background:#fff;border-right:1px solid var(--border);
+    overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:16px}
+  .main{flex:1;overflow-y:auto;padding:16px 20px}
+  /* Sidebar sections */
+  .sidebar-title{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
+    color:var(--muted);padding:0 4px;margin-bottom:6px}
+  .filter-btn{width:100%;text-align:left;padding:7px 10px;border-radius:8px;border:1px solid var(--border);
+    background:#fff;cursor:pointer;font-size:.82rem;color:var(--text);transition:.15s}
+  .filter-btn.active{background:var(--blue);color:#fff;border-color:var(--blue);font-weight:600}
+  .filter-btn:hover:not(.active){background:var(--blue-lt)}
+  /* Sliders */
+  .slider-row{margin-bottom:10px}
+  .slider-label{display:flex;justify-content:space-between;font-size:.78rem;margin-bottom:3px}
+  .slider-label span:last-child{font-weight:700;color:var(--blue)}
+  input[type=range]{width:100%;accent-color:var(--blue);height:4px}
+  .weight-total{text-align:center;font-size:.78rem;padding:6px;border-radius:8px;
+    background:var(--green-lt);color:var(--green);font-weight:700;margin-top:4px}
+  .weight-total.warn{background:var(--red-lt);color:var(--red)}
+  /* Tabs */
+  .tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);padding-bottom:0}
+  .tab{padding:8px 16px;border-radius:8px 8px 0 0;cursor:pointer;font-size:.83rem;font-weight:600;
+    color:var(--muted);border:1px solid transparent;border-bottom:none;transition:.15s}
+  .tab.active{background:#fff;color:var(--blue);border-color:var(--border);border-bottom:2px solid #fff;
+    margin-bottom:-2px}
+  .tab:hover:not(.active){background:var(--blue-lt);color:var(--blue)}
+  .tab-content{display:none}.tab-content.active{display:block}
+  /* KPI strip */
+  .kpi-strip{display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .kpi{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 18px;
+    min-width:110px;flex:1}
+  .kpi .val{font-size:1.5rem;font-weight:800;color:var(--blue)}
+  .kpi .lbl{font-size:.72rem;color:var(--muted);margin-top:2px;text-transform:uppercase;letter-spacing:.5px}
+  /* Search */
+  .search-wrap{position:relative;margin-bottom:10px}
+  .search-wrap input{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--border);
+    border-radius:8px;font-size:.83rem;outline:none;background:#fff}
+  .search-wrap input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(21,101,192,.1)}
+  .search-wrap::before{content:"🔍";position:absolute;left:9px;top:50%;transform:translateY(-50%);
+    font-size:.8rem}
+  /* Table */
+  .tbl-wrap{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+  table{width:100%;border-collapse:collapse;font-size:.8rem}
+  thead th{background:#1565C0;color:#fff;padding:9px 10px;text-align:left;white-space:nowrap;
+    cursor:pointer;user-select:none;font-size:.72rem;letter-spacing:.3px;text-transform:uppercase}
+  thead th:hover{background:#1976D2}
+  thead th.sort-asc::after{content:" ▲"}
+  thead th.sort-desc::after{content:" ▼"}
+  tbody tr{border-bottom:1px solid var(--border);transition:.1s;cursor:pointer}
+  tbody tr:hover{background:#F8F9FF}
+  tbody tr.selected{background:var(--blue-lt)}
+  tbody td{padding:8px 10px;white-space:nowrap}
+  .rank-cell{font-weight:800;width:44px;text-align:center;font-size:.9rem}
+  .name-cell{font-weight:600;max-width:170px}
+  .team-badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:.68rem;font-weight:700}
+  .team-k{background:#E3F2FD;color:#0D47A1}.team-a{background:#FFF3E0;color:#E65100}
+  .score-pill{display:inline-block;padding:3px 10px;border-radius:20px;font-weight:800;
+    font-size:.8rem;min-width:44px;text-align:center}
+  .pill-gold{background:#FFF8E1;color:#F57F17;border:1px solid #FFD54F}
+  .pill-good{background:var(--green-lt);color:var(--green);border:1px solid #A5D6A7}
+  .pill-mid{background:#EDE7F6;color:#4527A0;border:1px solid #CE93D8}
+  .pill-low{background:var(--orange-lt);color:var(--orange);border:1px solid #FFCC80}
+  .pill-bad{background:var(--red-lt);color:var(--red);border:1px solid #EF9A9A}
+  .bar-cell{position:relative;width:80px}
+  .bar-bg{height:6px;background:#EEE;border-radius:3px;overflow:hidden}
+  .bar-fill{height:100%;border-radius:3px;transition:.4s}
+  /* Charts */
+  .chart-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+  .chart-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px}
+  .chart-card.full{grid-column:1/-1}
+  .chart-card h3{font-size:.85rem;font-weight:700;margin-bottom:12px;color:var(--text)}
+  .chart-wrap{position:relative}
+  /* Detail panel */
+  .detail-panel{background:#fff;border:1px solid var(--border);border-radius:12px;
+    padding:18px;margin-top:16px;display:none}
+  .detail-panel.open{display:block}
+  .detail-header{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .detail-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#1565C0,#42A5F5);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:1.1rem}
+  .detail-metrics{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:14px}
+  .detail-metric{background:var(--bg);border-radius:8px;padding:10px 12px}
+  .detail-metric .dm-val{font-size:1.1rem;font-weight:800;color:var(--blue)}
+  .detail-metric .dm-lbl{font-size:.7rem;color:var(--muted);margin-top:2px}
+  /* Radar */
+  .radar-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  /* Refresh */
+  .refresh-row{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+  .btn{padding:7px 14px;border-radius:8px;border:none;cursor:pointer;font-size:.8rem;font-weight:600;
+    display:inline-flex;align-items:center;gap:5px;transition:.15s}
+  .btn-blue{background:var(--blue);color:#fff}.btn-blue:hover{background:#1976D2}
+  .btn-outline{background:#fff;border:1px solid var(--border);color:var(--text)}
+  .btn-outline:hover{background:var(--blue-lt);border-color:var(--blue);color:var(--blue)}
+  .countdown{font-size:.75rem;color:var(--muted)}
+  .spinner{display:none;width:18px;height:18px;border:2px solid var(--blue-lt);
+    border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  /* Tooltip */
+  [title]{cursor:help}
+  /* Responsive */
+  @media(max-width:900px){
+    .chart-grid{grid-template-columns:1fr}
+    .chart-card.full{grid-column:1}
+    .layout{flex-direction:column}
+    .sidebar{width:100%;border-right:none;border-bottom:1px solid var(--border);
+      flex-direction:row;flex-wrap:wrap;height:auto;overflow:visible}
+  }
+  .fade{animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div>
+    <h1>📊 India EMEA — Stack Ranking Dashboard</h1>
+    <div class="sub">Tableau Technical Support · FY2027 (Feb 2026 – Jan 2027) · YTD as of June 15, 2026</div>
+  </div>
+  <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+    <span class="badge"><span class="dot dot-yellow"></span>Last data pull: June 15, 2026</span>
+    <span class="badge"><span class="dot dot-green"></span>CSAT: Case surveys only · Chat &amp; N/A excluded</span>
+    <button class="btn btn-blue" onclick="refreshData()" id="refresh-btn">🔃 Refresh</button>
+  </div>
+</div>
+
+<div class="layout">
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div>
+    <div class="sidebar-title">Team Filter</div>
+    <div style="display:flex;flex-direction:column;gap:5px" id="team-filter-btns">
+      <button class="filter-btn active" onclick="setTeam('all',this)">🌏 Both Teams</button>
+      <button class="filter-btn" onclick="setTeam('Kiran Vijay',this)">🔵 Kiran Vijay</button>
+      <button class="filter-btn" onclick="setTeam('Akanksha Saxena',this)">🟠 Akanksha Saxena</button>
+    </div>
+  </div>
+  <div>
+    <div class="sidebar-title">Title Filter</div>
+    <div style="display:flex;flex-direction:column;gap:5px" id="title-filter-btns">
+      <button class="filter-btn active" onclick="setTitle('all',this)">👥 All Titles</button>
+      <button class="filter-btn" onclick="setTitle('Technical Support Engineer',this)">TSE</button>
+      <button class="filter-btn" onclick="setTitle('Senior Technical Support Engineer',this)">Senior TSE</button>
+      <button class="filter-btn" onclick="setTitle('Principal Support Engineer',this)">Principal SE</button>
+    </div>
+    <div id="title-count" style="font-size:.72rem;color:var(--muted);margin-top:5px;padding:0 4px"></div>
+  </div>
+  <div>
+    <div class="sidebar-title">Metric Weights <span id="weight-total-label" style="font-weight:700;color:var(--blue)"></span></div>
+    <div id="weight-warn" class="weight-total warn" style="display:none">⚠️ Weights must sum to 100%</div>
+    <div id="sliders"></div>
+    <button class="btn btn-outline" style="width:100%;margin-top:6px;font-size:.75rem" onclick="resetWeights()">↩ Reset defaults</button>
+  </div>
+  <div>
+    <div class="sidebar-title">Auto-Refresh</div>
+    <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;cursor:pointer">
+      <input type="checkbox" id="auto-refresh-toggle" onchange="toggleAutoRefresh()">
+      Refresh every 5 min
+    </label>
+    <div class="countdown" id="countdown" style="margin-top:4px"></div>
+  </div>
+  <div style="margin-top:auto">
+    <div class="sidebar-title">Weights v4</div>
+    <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
+      CSAT 30% · TTR 30%<br>
+      Closed 18% · Throughput 9%<br>
+      Surveys 3% · SLA 4%<br>
+      Reopen 4% · Escalations 2%<br><br>
+      <b>Throughput</b> = closures ÷ weeks<br>
+      (5 working days = 1 week)<br>
+      96 working days YTD → 19.2 wks
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+  <!-- KPI strip -->
+  <div class="kpi-strip" id="kpi-strip"></div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('rankings',this)">🏆 Rankings</div>
+    <div class="tab" onclick="switchTab('charts',this)">📈 Charts</div>
+    <div class="tab" onclick="switchTab('trends',this)">📉 Trends</div>
+    <div class="tab" onclick="switchTab('compare',this)">⚖️ Team Compare</div>
+  </div>
+
+  <!-- Rankings Tab -->
+  <div id="tab-rankings" class="tab-content active">
+    <div class="refresh-row">
+      <div class="search-wrap" style="flex:1;max-width:280px">
+        <input type="text" id="search" placeholder="Search engineer…" oninput="renderTable()">
+      </div>
+      <div class="spinner" id="spinner"></div>
+      <span class="countdown" id="updated-label">Data as of June 15, 2026</span>
+    </div>
+    <div class="tbl-wrap fade">
+      <table id="rank-table">
+        <thead>
+          <tr>
+            <th onclick="sortBy('rank')">Rank</th>
+            <th onclick="sortBy('name')" style="min-width:140px">Name</th>
+            <th onclick="sortBy('team')">Team</th>
+            <th onclick="sortBy('title')">Title</th>
+            <th onclick="sortBy('composite')">Score</th>
+            <th onclick="sortBy('csat')" title="Avg CSAT (1-5) — case surveys only">CSAT</th>
+            <th onclick="sortBy('ttr')" title="Avg Time-to-Resolution (days) — lower is better">TTR</th>
+            <th onclick="sortBy('closed')" title="Total closed cases FY2027 YTD">Closed</th>
+            <th onclick="sortBy('sla_pct')" title="% cases where initial response was Met">SLA%</th>
+            <th onclick="sortBy('throughput')" title="Closures per week (5 working days = 1 week; 96 working days YTD)">Thruput/wk</th>
+            <th onclick="sortBy('reopen_rate')" title="% cases reopened — lower is better">Reopen%</th>
+            <th onclick="sortBy('survey_count')" title="Surveys received (case only)">Surveys</th>
+            <th>Productivity</th>
+            <th>Quality</th>
+            <th>Speed</th>
+          </tr>
+        </thead>
+        <tbody id="table-body"></tbody>
+      </table>
+    </div>
+    <div class="detail-panel" id="detail-panel"></div>
+  </div>
+
+  <!-- Charts Tab -->
+  <div id="tab-charts" class="tab-content">
+    <div class="chart-grid">
+      <div class="chart-card full">
+        <h3>Composite Score — All Engineers</h3>
+        <div class="chart-wrap" style="height:340px"><canvas id="chart-bar"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>Radar — Select Engineer</h3>
+        <select id="radar-select" style="margin-bottom:8px;width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:6px;font-size:.8rem"></select>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-radar"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>CSAT Distribution</h3>
+        <div class="chart-wrap" style="height:260px"><canvas id="chart-csat"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Trends Tab -->
+  <div id="tab-trends" class="tab-content">
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>🔵 Kiran Vijay's Team — Monthly Closed</h3>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart-trend-k"></canvas></div>
+      </div>
+      <div class="chart-card">
+        <h3>🟠 Akanksha Saxena's Team — Monthly Closed</h3>
+        <div class="chart-wrap" style="height:300px"><canvas id="chart-trend-a"></canvas></div>
+      </div>
+      <div class="chart-card full">
+        <h3>Combined Team Throughput by Month</h3>
+        <div class="chart-wrap" style="height:240px"><canvas id="chart-team-trend"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Team Compare Tab -->
+  <div id="tab-compare" class="tab-content">
+    <div class="chart-grid">
+      <div class="chart-card">
+        <h3>Team Averages Comparison</h3>
+        <div class="chart-wrap" style="height:320px"><canvas id="chart-compare"></canvas></div>
+      </div>
+      <div class="chart-card" id="compare-table-card">
+        <h3>Metric-by-Metric Breakdown</h3>
+        <div id="compare-table"></div>
+      </div>
+    </div>
+  </div>
+</div><!-- end main -->
+</div><!-- end layout -->
+
+<script>
+// ── Raw data ──────────────────────────────────────────────────────────────────
+const RAW = [{"uid": "005Hx000005wmtsIAA", "name": "Bajrang Lal Godhara", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.706, "csat_count": 17, "ttr": 4.58, "closed": 180, "sla_pct": 98.4, "throughput": 9.38, "reopen_rate": 13.9, "escalations": 0, "survey_count": 26, "monthly": [36, 49, 30, 42, 23]}, {"uid": "005Hx000005xCq1IAE", "name": "Sairam Reddy Anireddy", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.75, "csat_count": 16, "ttr": 5.83, "closed": 176, "sla_pct": 98.2, "throughput": 9.17, "reopen_rate": 6.8, "escalations": 0, "survey_count": 25, "monthly": [40, 39, 48, 38, 11]}, {"uid": "005Hx000005wDmXIAU", "name": "Swaviman Mohapatra", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.682, "csat_count": 22, "ttr": 7.57, "closed": 162, "sla_pct": 97.5, "throughput": 8.44, "reopen_rate": 13.6, "escalations": 0, "survey_count": 26, "monthly": [45, 35, 33, 33, 16]}, {"uid": "005Hx000005wyo7IAA", "name": "Dinesh Gunani", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.741, "csat_count": 27, "ttr": 6.2, "closed": 139, "sla_pct": 98.6, "throughput": 7.24, "reopen_rate": 16.5, "escalations": 0, "survey_count": 32, "monthly": [30, 13, 28, 42, 26]}, {"uid": "005Hx000005wWoeIAE", "name": "Naga Pulavarty", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.643, "csat_count": 14, "ttr": 5.46, "closed": 133, "sla_pct": 98.5, "throughput": 6.93, "reopen_rate": 12.0, "escalations": 0, "survey_count": 21, "monthly": [17, 39, 41, 24, 12]}, {"uid": "005Hx000005x8w6IAA", "name": "Sirisha Cherrikallimal", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 3.5, "csat_count": 4, "ttr": 7.73, "closed": 131, "sla_pct": 97.7, "throughput": 6.82, "reopen_rate": 6.1, "escalations": 0, "survey_count": 6, "monthly": [29, 43, 22, 24, 13]}, {"uid": "005Hx000005w5v8IAA", "name": "Lakshmi Prasanna Pediredla", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.5, "csat_count": 2, "ttr": 9.44, "closed": 124, "sla_pct": 97.6, "throughput": 6.46, "reopen_rate": 13.7, "escalations": 0, "survey_count": 5, "monthly": [34, 22, 33, 26, 9]}, {"uid": "005Hx000005wBRpIAM", "name": "Ajay Chada", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.8, "csat_count": 10, "ttr": 8.84, "closed": 96, "sla_pct": 97.9, "throughput": 5.0, "reopen_rate": 16.7, "escalations": 0, "survey_count": 10, "monthly": [28, 24, 7, 26, 11]}, {"uid": "005Hx000005w5oEIAQ", "name": "Krishna Sai Goud Ramapuram", "team": "Kiran Vijay", "title": "Technical Support Engineer", "csat": 4.8, "csat_count": 5, "ttr": 9.87, "closed": 86, "sla_pct": 97.7, "throughput": 4.48, "reopen_rate": 8.1, "escalations": 0, "survey_count": 8, "monthly": [17, 32, 21, 10, 6]}, {"uid": "005Hx000005xDZQIA2", "name": "Goutam Ippili", "team": "Kiran Vijay", "title": "Senior Technical Support Engineer", "csat": 4.917, "csat_count": 12, "ttr": 8.97, "closed": 70, "sla_pct": 98.6, "throughput": 3.65, "reopen_rate": 0.0, "escalations": 0, "survey_count": 11, "monthly": [11, 19, 25, 8, 7]}, {"uid": "005Hx000000EBexIAG", "name": "Jagadeesh Reddy Mandipalli", "team": "Kiran Vijay", "title": "Senior Technical Support Engineer", "csat": 4.5, "csat_count": 10, "ttr": 13.12, "closed": 63, "sla_pct": 100.0, "throughput": 3.28, "reopen_rate": 1.6, "escalations": 0, "survey_count": 10, "monthly": [10, 12, 18, 14, 9]}, {"uid": "005Hx000008IHaTIAW", "name": "Srikanth Edam", "team": "Kiran Vijay", "title": "Senior Technical Support Engineer", "csat": 4.833, "csat_count": 6, "ttr": 8.38, "closed": 57, "sla_pct": 100.0, "throughput": 2.97, "reopen_rate": 5.3, "escalations": 0, "survey_count": 7, "monthly": [0, 20, 15, 16, 6]}, {"uid": "005Hx000005xLIEIA2", "name": "Preethi J", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.857, "csat_count": 7, "ttr": 8.7, "closed": 185, "sla_pct": 98.9, "throughput": 9.64, "reopen_rate": 14.1, "escalations": 0, "survey_count": 10, "monthly": [33, 52, 43, 39, 18]}, {"uid": "005Hx000009VLKjIAO", "name": "Siddarth K", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.579, "csat_count": 19, "ttr": 9.81, "closed": 183, "sla_pct": 97.7, "throughput": 9.53, "reopen_rate": 10.9, "escalations": 0, "survey_count": 33, "monthly": [43, 55, 30, 35, 20]}, {"uid": "005Hx000005wZYcIAM", "name": "Milan Bekal", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.938, "csat_count": 16, "ttr": 5.96, "closed": 171, "sla_pct": 98.2, "throughput": 8.91, "reopen_rate": 9.4, "escalations": 0, "survey_count": 20, "monthly": [33, 39, 43, 39, 17]}, {"uid": "005Hx000005w8WyIAI", "name": "Vidyotama Yadav", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.625, "csat_count": 8, "ttr": 11.03, "closed": 147, "sla_pct": 97.3, "throughput": 7.66, "reopen_rate": 7.5, "escalations": 0, "survey_count": 15, "monthly": [39, 36, 32, 24, 16]}, {"uid": "005Hx000005wXRHIA2", "name": "Ajay Saravanan Rajan", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.833, "csat_count": 6, "ttr": 6.19, "closed": 142, "sla_pct": 99.3, "throughput": 7.4, "reopen_rate": 10.6, "escalations": 0, "survey_count": 9, "monthly": [36, 31, 20, 31, 24]}, {"uid": "005Hx000005wBCGIA2", "name": "Pankaj Tandon", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.25, "csat_count": 12, "ttr": 4.88, "closed": 140, "sla_pct": 97.9, "throughput": 7.29, "reopen_rate": 16.4, "escalations": 0, "survey_count": 16, "monthly": [31, 42, 32, 27, 8]}, {"uid": "005Hx000005x0elIAA", "name": "RESHMA G", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.778, "csat_count": 9, "ttr": 7.18, "closed": 136, "sla_pct": 97.0, "throughput": 7.08, "reopen_rate": 3.7, "escalations": 0, "survey_count": 12, "monthly": [34, 30, 35, 23, 14]}, {"uid": "005Hx000009MPc5IAG", "name": "Harsh Tripathy", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.75, "csat_count": 12, "ttr": 6.45, "closed": 134, "sla_pct": 99.2, "throughput": 6.98, "reopen_rate": 6.7, "escalations": 0, "survey_count": 15, "monthly": [37, 39, 11, 32, 15]}, {"uid": "005Hx000009xP3dIAE", "name": "Abrar Farooqi", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.8, "csat_count": 10, "ttr": 8.54, "closed": 127, "sla_pct": 100.0, "throughput": 6.61, "reopen_rate": 8.7, "escalations": 0, "survey_count": 11, "monthly": [30, 33, 34, 23, 7]}, {"uid": "005Hx000005wbHjIAI", "name": "Sumit Kumar", "team": "Akanksha Saxena", "title": "Senior Technical Support Engineer", "csat": 4.455, "csat_count": 11, "ttr": 16.18, "closed": 111, "sla_pct": 99.1, "throughput": 5.78, "reopen_rate": 7.2, "escalations": 0, "survey_count": 12, "monthly": [10, 25, 35, 27, 14]}, {"uid": "005Hx000005xKDNIA2", "name": "Clifford Dsa", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.778, "csat_count": 9, "ttr": 6.26, "closed": 108, "sla_pct": 98.1, "throughput": 5.62, "reopen_rate": 9.3, "escalations": 0, "survey_count": 12, "monthly": [1, 9, 37, 51, 10]}, {"uid": "005Hx000008HhWzIAK", "name": "Tabrez K", "team": "Akanksha Saxena", "title": "Senior Technical Support Engineer", "csat": 5.0, "csat_count": 10, "ttr": 9.64, "closed": 100, "sla_pct": 100.0, "throughput": 5.21, "reopen_rate": 18.0, "escalations": 0, "survey_count": 10, "monthly": [30, 28, 32, 10, 0]}, {"uid": "005Hx000005w8nwIAA", "name": "Affan Saadh", "team": "Akanksha Saxena", "title": "Technical Support Engineer", "csat": 4.667, "csat_count": 3, "ttr": 8.16, "closed": 75, "sla_pct": 96.9, "throughput": 3.91, "reopen_rate": 18.7, "escalations": 0, "survey_count": 5, "monthly": [44, 21, 9, 1, 0]}];
+const MONTHS = ["Feb 2026", "Mar 2026", "Apr 2026", "May 2026", "Jun 2026"];
+const INVERSE = new Set(["ttr","reopen_rate","escalations"]);
+
+const DEFAULT_WEIGHTS = {
+  csat:0.30, ttr:0.30, closed:0.18, throughput:0.09,
+  survey_count:0.03, sla_pct:0.04, reopen_rate:0.04, escalations:0.02
+};
+let weights = {...DEFAULT_WEIGHTS};
+let teamFilter = 'all';
+let titleFilter = 'all';
+let sortCol = 'rank';
+let sortDir = 1;
+let selectedUid = null;
+let autoRefreshTimer = null;
+let countdownTimer = null;
+let countdownSecs = 300;
+
+// ── Scoring ───────────────────────────────────────────────────────────────────
+function minmax(arr) {
+  const mn = Math.min(...arr), mx = Math.max(...arr);
+  if (mx === mn) return arr.map(() => 50);
+  return arr.map(v => (v - mn) / (mx - mn) * 100);
+}
+
+function computeScores(data) {
+  const cols = Object.keys(weights);
+  const normed = {};
+  cols.forEach(col => {
+    const vals = data.map(d => d[col] ?? 0);
+    const n = minmax(vals);
+    normed[col] = INVERSE.has(col) ? n.map(v => 100-v) : n;
+  });
+  return data.map((d,i) => {
+    const composite = cols.reduce((s,c) => s + (normed[c][i]||0)*weights[c], 0);
+    const prod = normed.closed[i]*0.50 + normed.throughput[i]*0.35 + normed.survey_count[i]*0.15;
+    const qual = (normed.csat[i]||0)*0.45 + normed.reopen_rate[i]*0.25 + normed.escalations[i]*0.15 + normed.sla_pct[i]*0.15;
+    const spd  = normed.ttr[i];
+    return {...d, composite, prod, qual, spd, _norm: {...Object.fromEntries(cols.map((c,ci)=>[c,normed[c][i]]))}};
+  });
+}
+
+function rankData(data) {
+  const sorted = [...data].sort((a,b) => b.composite - a.composite);
+  sorted.forEach((d,i) => d.rank = i+1);
+  return sorted;
+}
+
+// ── Filters & state ───────────────────────────────────────────────────────────
+function getFiltered() {
+  const q = document.getElementById('search').value.toLowerCase();
+  let data = RAW;
+  if (teamFilter !== 'all') data = data.filter(d => d.team === teamFilter);
+  if (titleFilter !== 'all') data = data.filter(d => d.title === titleFilter);
+  if (q) data = data.filter(d => d.name.toLowerCase().includes(q));
+  return rankData(computeScores(data));
+}
+
+function getAllScored() { return rankData(computeScores(RAW)); }
+
+// ── KPI strip ─────────────────────────────────────────────────────────────────
+function renderKPIs() {
+  const d = getFiltered();
+  const total = d.reduce((s,r)=>s+r.closed,0);
+  const avgCsat = d.filter(r=>r.csat).reduce((s,r)=>s+r.csat,0) / d.filter(r=>r.csat).length;
+  const avgTtr  = d.reduce((s,r)=>s+r.ttr,0)/d.length;
+  const avgSla  = d.reduce((s,r)=>s+r.sla_pct,0)/d.length;
+  const avgComp = d.reduce((s,r)=>s+r.composite,0)/d.length;
+  document.getElementById('kpi-strip').innerHTML = `
+    <div class="kpi"><div class="val">${d.length}</div><div class="lbl">Engineers</div></div>
+    <div class="kpi"><div class="val">${total.toLocaleString()}</div><div class="lbl">Total Closed</div></div>
+    <div class="kpi"><div class="val">${avgCsat.toFixed(2)}/5</div><div class="lbl">Avg CSAT</div></div>
+    <div class="kpi"><div class="val">${avgTtr.toFixed(1)}d</div><div class="lbl">Avg TTR</div></div>
+    <div class="kpi"><div class="val">${avgSla.toFixed(1)}%</div><div class="lbl">Avg SLA%</div></div>
+    <div class="kpi"><div class="val">${avgComp.toFixed(1)}</div><div class="lbl">Avg Score</div></div>
+  `;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+const MEDALS = {1:'🥇',2:'🥈',3:'🥉'};
+function pillClass(v) {
+  if (v>=80) return 'pill-gold';
+  if (v>=65) return 'pill-good';
+  if (v>=50) return 'pill-mid';
+  if (v>=35) return 'pill-low';
+  return 'pill-bad';
+}
+function barHtml(v, color) {
+  return `<div class="bar-cell"><div class="bar-bg"><div class="bar-fill" style="width:${v}%;background:${color}"></div></div></div>`;
+}
+
+function renderTable() {
+  renderKPIs();
+  let data = getFiltered();
+  if (sortCol) {
+    data = [...data].sort((a,b) => {
+      let av = a[sortCol]??-1, bv = b[sortCol]??-1;
+      if (typeof av === 'string') return av.localeCompare(bv)*sortDir;
+      return (av-bv)*sortDir;
+    });
+  }
+  const tbody = document.getElementById('table-body');
+  tbody.innerHTML = data.map(r => {
+    const medal = MEDALS[r.rank] || '';
+    const teamBadge = r.team === 'Kiran Vijay'
+      ? `<span class="team-badge team-k">Kiran</span>`
+      : `<span class="team-badge team-a">Akanksha</span>`;
+    const csat = r.csat ? r.csat.toFixed(2) : 'N/A';
+    const csatColor = r.csat>=4.8?'#1B5E20':r.csat>=4.5?'#1565C0':'#B71C1C';
+    const comp = r.composite.toFixed(1);
+    const titleShort = r.title==='Senior Technical Support Engineer'?'Senior TSE':r.title==='Principal Support Engineer'?'Principal SE':'TSE';
+    const titleColor = r.title==='Senior Technical Support Engineer'?'#4527A0':r.title==='Principal Support Engineer'?'#1B5E20':'#37474F';
+    const titleBg    = r.title==='Senior Technical Support Engineer'?'#EDE7F6':r.title==='Principal Support Engineer'?'#E8F5E9':'#ECEFF1';
+    return `<tr onclick="selectEngineer('${r.uid}')" ${r.uid===selectedUid?'class="selected"':''}>
+      <td class="rank-cell">${medal} ${r.rank}</td>
+      <td class="name-cell">${r.name}</td>
+      <td>${teamBadge}</td>
+      <td><span class="team-badge" style="background:${titleBg};color:${titleColor}">${titleShort}</span></td>
+      <td><span class="score-pill ${pillClass(r.composite)}">${comp}</span></td>
+      <td style="color:${csatColor};font-weight:600">${csat}</td>
+      <td>${r.ttr.toFixed(1)}d</td>
+      <td><b>${r.closed}</b></td>
+      <td>${r.sla_pct.toFixed(1)}%</td>
+      <td>${r.throughput.toFixed(1)}/wk</td>
+      <td style="color:${r.reopen_rate>15?'#B71C1C':r.reopen_rate>10?'#E65100':'inherit'}">${r.reopen_rate.toFixed(1)}%</td>
+      <td>${r.survey_count}</td>
+      <td>${barHtml(r.prod,'#42A5F5')}<span style="font-size:.72rem">${r.prod.toFixed(0)}</span></td>
+      <td>${barHtml(r.qual,'#66BB6A')}<span style="font-size:.72rem">${r.qual.toFixed(0)}</span></td>
+      <td>${barHtml(r.spd,'#EF5350')}<span style="font-size:.72rem">${r.spd.toFixed(0)}</span></td>
+    </tr>`;
+  }).join('');
+  updateSortIndicators();
+  if (selectedUid) renderDetail(selectedUid);
+}
+
+function sortBy(col) {
+  if (sortCol === col) sortDir *= -1; else { sortCol=col; sortDir=col==='rank'?1:-1; }
+  renderTable();
+}
+
+function updateSortIndicators() {
+  document.querySelectorAll('thead th').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+    if (th.onclick?.toString().includes(`'${sortCol}'`)) {
+      th.classList.add(sortDir===1?'sort-asc':'sort-desc');
+    }
+  });
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+let detailRadarChart = null;
+function selectEngineer(uid) {
+  selectedUid = selectedUid===uid ? null : uid;
+  renderTable();
+  if (selectedUid) renderDetail(uid);
+  else document.getElementById('detail-panel').classList.remove('open');
+}
+
+function renderDetail(uid) {
+  const all = getAllScored();
+  const r = all.find(d=>d.uid===uid);
+  if (!r) return;
+  const panel = document.getElementById('detail-panel');
+  panel.classList.add('open');
+  const initials = r.name.split(' ').map(w=>w[0]).slice(0,2).join('');
+  const teamColor = r.team==='Kiran Vijay'?'#1565C0':'#E65100';
+
+  const metrics = [
+    {l:'Composite Score',v:r.composite.toFixed(1)+'/100'},
+    {l:'CSAT (case only)',v:r.csat?r.csat.toFixed(3)+'/5':'N/A'},
+    {l:'CSAT Surveys',v:r.csat_count},
+    {l:'TTR (avg)',v:r.ttr.toFixed(1)+' days'},
+    {l:'Cases Closed',v:r.closed},
+    {l:'SLA Met%',v:r.sla_pct.toFixed(1)+'%'},
+    {l:'Throughput',v:r.throughput.toFixed(1)+'/wk'},
+    {l:'Reopen Rate',v:r.reopen_rate.toFixed(1)+'%'},
+    {l:'Surveys Rcvd',v:r.survey_count},
+    {l:'Productivity',v:r.prod.toFixed(0)+'/100'},
+    {l:'Quality',v:r.qual.toFixed(0)+'/100'},
+    {l:'Speed',v:r.spd.toFixed(0)+'/100'},
+  ];
+
+  panel.innerHTML = `
+    <div class="detail-header">
+      <div class="detail-avatar" style="background:linear-gradient(135deg,${teamColor},#90CAF9)">${initials}</div>
+      <div>
+        <div style="font-size:1.1rem;font-weight:800">${r.name}</div>
+        <div style="font-size:.8rem;color:var(--muted)">${r.team}'s team &nbsp;·&nbsp; Rank #${r.rank} &nbsp;·&nbsp; ${r.title}</div>
+      </div>
+      <button class="btn btn-outline" style="margin-left:auto" onclick="selectEngineer('${uid}')">✕ Close</button>
+    </div>
+    <div class="detail-metrics">${metrics.map(m=>`
+      <div class="detail-metric">
+        <div class="dm-val">${m.v}</div>
+        <div class="dm-lbl">${m.l}</div>
+      </div>`).join('')}
+    </div>
+    <div class="radar-row">
+      <div><canvas id="detail-radar" height="220"></canvas></div>
+      <div><canvas id="detail-trend" height="220"></canvas></div>
+    </div>
+  `;
+
+  // Radar vs team avg
+  const teamPeers = all.filter(d=>d.team===r.team);
+  const radarCols = ['csat','closed','ttr','sla_pct','throughput','reopen_rate','survey_count'];
+  const radarLabels = ['CSAT','Closed','TTR*','SLA%','Throughput','Reopen*','Surveys'];
+  function getRadarVals(eng) {
+    return radarCols.map(col => {
+      const vals = all.map(d=>d[col]??0);
+      const mn=Math.min(...vals),mx=Math.max(...vals);
+      const n = mx===mn?50:(eng[col]??0-mn)/(mx-mn)*100;
+      return INVERSE.has(col)?100-n:n;
+    });
+  }
+  const myVals = getRadarVals(r);
+  const avgVals = radarCols.map((c,i)=> teamPeers.reduce((s,d)=>s+getRadarVals(d)[i],0)/teamPeers.length);
+
+  if (detailRadarChart) detailRadarChart.destroy();
+  detailRadarChart = new Chart(document.getElementById('detail-radar'), {
+    type:'radar',
+    data:{
+      labels:radarLabels,
+      datasets:[
+        {label:r.name, data:myVals, borderColor:teamColor, backgroundColor:teamColor+'33', pointRadius:4},
+        {label:'Team avg', data:avgVals, borderColor:'#9E9E9E', backgroundColor:'#9E9E9E22', borderDash:[4,4], pointRadius:3},
+      ]
+    },
+    options:{scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:9}},pointLabels:{font:{size:9}}}},
+      plugins:{legend:{labels:{font:{size:10}}}},responsive:true,maintainAspectRatio:false}
+  });
+
+  // Trend line
+  new Chart(document.getElementById('detail-trend'), {
+    type:'bar',
+    data:{
+      labels:MONTHS,
+      datasets:[{
+        label:'Cases Closed',
+        data:r.monthly,
+        backgroundColor:teamColor+'BB',
+        borderColor:teamColor,
+        borderWidth:1,
+        borderRadius:4,
+      }]
+    },
+    options:{
+      plugins:{legend:{display:false},title:{display:true,text:'Monthly Closed Cases',font:{size:11}}},
+      scales:{y:{beginAtZero:true,ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}},
+      responsive:true,maintainAspectRatio:false
+    }
+  });
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Charts Tab ────────────────────────────────────────────────────────────────
+let barChart=null, radarChart=null, csatChart=null;
+
+function renderBarChart() {
+  const data = getAllScored().sort((a,b)=>a.composite-b.composite);
+  const ctx = document.getElementById('chart-bar');
+  if (!ctx) return;
+  if (barChart) barChart.destroy();
+  barChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:data.map(d=>d.name),
+      datasets:[{
+        label:'Composite Score',
+        data:data.map(d=>d.composite.toFixed(1)),
+        backgroundColor:data.map(d=>d.team==='Kiran Vijay'?'#1565C088':'#E6510088'),
+        borderColor:data.map(d=>d.team==='Kiran Vijay'?'#1565C0':'#E65100'),
+        borderWidth:1,borderRadius:4,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:ctx=>`Score: ${ctx.parsed.x}`}},
+        annotation:{}
+      },
+      scales:{
+        x:{min:0,max:100,ticks:{font:{size:10}}},
+        y:{ticks:{font:{size:10}}}
+      },
+      responsive:true,maintainAspectRatio:false
+    }
+  });
+}
+
+function renderRadarChartTab(uid) {
+  const all = getAllScored();
+  const r = all.find(d=>d.uid===uid) || all[0];
+  const ctx = document.getElementById('chart-radar');
+  if (!ctx || !r) return;
+  const teamPeers = all.filter(d=>d.team===r.team);
+  const radarCols = ['csat','closed','ttr','sla_pct','throughput','reopen_rate','survey_count'];
+  const radarLabels = ['CSAT','Closed','TTR*','SLA%','Throughput','Reopen*','Surveys'];
+  function getVals(eng) {
+    return radarCols.map(col => {
+      const vals = all.map(d=>d[col]??0);
+      const mn=Math.min(...vals),mx=Math.max(...vals);
+      const n = mx===mn?50:((eng[col]??0)-mn)/(mx-mn)*100;
+      return INVERSE.has(col)?100-n:n;
+    });
+  }
+  const avgVals = radarCols.map((c,i)=>teamPeers.reduce((s,d)=>s+getVals(d)[i],0)/teamPeers.length);
+  const teamColor = r.team==='Kiran Vijay'?'#1565C0':'#E65100';
+  if (radarChart) radarChart.destroy();
+  radarChart = new Chart(ctx, {
+    type:'radar',
+    data:{
+      labels:radarLabels,
+      datasets:[
+        {label:r.name,data:getVals(r),borderColor:teamColor,backgroundColor:teamColor+'33',pointRadius:4},
+        {label:'Team avg',data:avgVals,borderColor:'#9E9E9E',backgroundColor:'#9E9E9E22',borderDash:[4,4],pointRadius:3},
+      ]
+    },
+    options:{scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:10}},pointLabels:{font:{size:10}}}},
+      plugins:{legend:{labels:{font:{size:11}}}},responsive:true,maintainAspectRatio:false}
+  });
+}
+
+function renderCsatChart() {
+  const data = getAllScored().sort((a,b)=>b.csat-a.csat);
+  const ctx = document.getElementById('chart-csat');
+  if (!ctx) return;
+  if (csatChart) csatChart.destroy();
+  csatChart = new Chart(ctx, {
+    type:'bar',
+    data:{
+      labels:data.map(d=>d.name.split(' ')[0]+' '+d.name.split(' ').pop()),
+      datasets:[{
+        label:'CSAT',
+        data:data.map(d=>d.csat||0),
+        backgroundColor:data.map(d=>d.csat>=4.8?'#1B5E2088':d.csat>=4.5?'#1565C088':'#B71C1C88'),
+        borderColor:data.map(d=>d.csat>=4.8?'#1B5E20':d.csat>=4.5?'#1565C0':'#B71C1C'),
+        borderWidth:1,borderRadius:4,
+      }]
+    },
+    options:{
+      indexAxis:'y',
+      scales:{x:{min:3,max:5,ticks:{font:{size:10}}},y:{ticks:{font:{size:9}}}},
+      plugins:{legend:{display:false}},
+      responsive:true,maintainAspectRatio:false
+    }
+  });
+}
+
+// ── Trends Tab ────────────────────────────────────────────────────────────────
+let trendKChart=null, trendAChart=null, teamTrendChart=null;
+const KIRAN_COLORS=['#1565C0','#1976D2','#2196F3','#42A5F5','#64B5F6','#90CAF9','#BBDEFB','#0D47A1','#0277BD','#01579B','#E1F5FE','#B3E5FC'];
+const AKA_COLORS  =['#E65100','#F4511E','#FF7043','#FF8A65','#FFAB91','#FFCCBC','#BF360C','#DD2C00','#FF3D00','#FF6D00','#FFF3E0','#FFE0B2','#FFCC80'];
+
+function renderTrendCharts() {
+  const kData = RAW.filter(d=>d.team==='Kiran Vijay');
+  const aData = RAW.filter(d=>d.team==='Akanksha Saxena');
+
+  function makeDatasets(engineers, colors) {
+    return engineers.map((d,i) => ({
+      label:d.name, data:d.monthly,
+      borderColor:colors[i%colors.length],
+      backgroundColor:'transparent',
+      pointRadius:3, borderWidth:2, tension:.3
+    }));
+  }
+
+  const kCtx = document.getElementById('chart-trend-k');
+  if (kCtx) {
+    if (trendKChart) trendKChart.destroy();
+    trendKChart = new Chart(kCtx, {
+      type:'line',
+      data:{labels:MONTHS, datasets:makeDatasets(kData,KIRAN_COLORS)},
+      options:{plugins:{legend:{labels:{font:{size:9}}}},scales:{y:{beginAtZero:true,ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}},responsive:true,maintainAspectRatio:false}
+    });
+  }
+  const aCtx = document.getElementById('chart-trend-a');
+  if (aCtx) {
+    if (trendAChart) trendAChart.destroy();
+    trendAChart = new Chart(aCtx, {
+      type:'line',
+      data:{labels:MONTHS, datasets:makeDatasets(aData,AKA_COLORS)},
+      options:{plugins:{legend:{labels:{font:{size:9}}}},scales:{y:{beginAtZero:true,ticks:{font:{size:9}}},x:{ticks:{font:{size:9}}}},responsive:true,maintainAspectRatio:false}
+    });
+  }
+
+  // Team totals
+  const teamTotals = (team) => MONTHS.map((_,mi)=>RAW.filter(d=>d.team===team).reduce((s,d)=>s+(d.monthly[mi]||0),0));
+  const ttCtx = document.getElementById('chart-team-trend');
+  if (ttCtx) {
+    if (teamTrendChart) teamTrendChart.destroy();
+    teamTrendChart = new Chart(ttCtx, {
+      type:'bar',
+      data:{
+        labels:MONTHS,
+        datasets:[
+          {label:'Kiran Vijay',data:teamTotals('Kiran Vijay'),backgroundColor:'#1565C088',borderColor:'#1565C0',borderWidth:1,borderRadius:4},
+          {label:'Akanksha Saxena',data:teamTotals('Akanksha Saxena'),backgroundColor:'#E6510088',borderColor:'#E65100',borderWidth:1,borderRadius:4},
+        ]
+      },
+      options:{plugins:{legend:{labels:{font:{size:10}}}},scales:{y:{beginAtZero:true},x:{ticks:{font:{size:10}}}},responsive:true,maintainAspectRatio:false}
+    });
+  }
+}
+
+// ── Compare Tab ───────────────────────────────────────────────────────────────
+let compareChart=null;
+function renderCompareTab() {
+  const all = getAllScored();
+  const avg = (team,col) => { const t=all.filter(d=>d.team===team); return t.reduce((s,d)=>s+(d[col]||0),0)/t.length; };
+  const cols = [['composite','Score'],['csat','CSAT'],['ttr','TTR (d)'],['sla_pct','SLA%'],['closed','Closed'],['reopen_rate','Reopen%']];
+  const kVals = cols.map(([c])=>avg('Kiran Vijay',c));
+  const aVals = cols.map(([c])=>avg('Akanksha Saxena',c));
+
+  const ctx = document.getElementById('chart-compare');
+  if (ctx) {
+    if (compareChart) compareChart.destroy();
+    compareChart = new Chart(ctx, {
+      type:'bar',
+      data:{
+        labels:cols.map(c=>c[1]),
+        datasets:[
+          {label:'Kiran Vijay',data:kVals.map(v=>v.toFixed(2)),backgroundColor:'#1565C088',borderColor:'#1565C0',borderWidth:1,borderRadius:4},
+          {label:'Akanksha Saxena',data:aVals.map(v=>v.toFixed(2)),backgroundColor:'#E6510088',borderColor:'#E65100',borderWidth:1,borderRadius:4},
+        ]
+      },
+      options:{plugins:{legend:{labels:{font:{size:11}}}},scales:{y:{beginAtZero:true},x:{ticks:{font:{size:10}}}},responsive:true,maintainAspectRatio:false}
+    });
+  }
+
+  const rows = cols.map(([col,label]) => {
+    const kv=avg('Kiran Vijay',col), av=avg('Akanksha Saxena',col);
+    const better = INVERSE.has(col)? (kv<av?'Kiran':'Akanksha') : (kv>av?'Kiran':'Akanksha');
+    return `<div style="display:flex;justify-content:space-between;align-items:center;
+      padding:7px 0;border-bottom:1px solid var(--border);font-size:.8rem">
+      <span style="flex:1;color:var(--muted)">${label}</span>
+      <span style="flex:1;text-align:center;font-weight:700;color:#1565C0">${kv.toFixed(2)}</span>
+      <span style="flex:.6;text-align:center;font-size:.7rem;padding:2px 6px;border-radius:12px;
+        background:${better==='Kiran'?'#1B5E2022':'#E6510022'};color:${better==='Kiran'?'#1B5E20':'#E65100'};font-weight:700">
+        ${better}</span>
+      <span style="flex:1;text-align:center;font-weight:700;color:#E65100">${av.toFixed(2)}</span>
+    </div>`;
+  });
+  const tc = document.getElementById('compare-table');
+  if (tc) {
+    tc.innerHTML = `<div style="display:flex;justify-content:space-between;font-size:.72rem;
+      font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:6px">
+      <span style="flex:1">Metric</span>
+      <span style="flex:1;text-align:center;color:#1565C0">Kiran Vijay</span>
+      <span style="flex:.6;text-align:center">Winner</span>
+      <span style="flex:1;text-align:center;color:#E65100">Akanksha Saxena</span>
+    </div>` + rows.join('');
+  }
+}
+
+// ── Weights / sliders ─────────────────────────────────────────────────────────
+const SLIDER_CONFIG = [
+  {key:'csat',       label:'CSAT',         default:30},
+  {key:'ttr',        label:'TTR',           default:30},
+  {key:'closed',     label:'Closed Cases',  default:18},
+  {key:'throughput', label:'Throughput',    default:9},
+  {key:'survey_count',label:'Surveys',      default:3},
+  {key:'sla_pct',    label:'SLA %',         default:4},
+  {key:'reopen_rate',label:'Reopen Rate',   default:4},
+  {key:'escalations',label:'Escalations',   default:2},
+];
+
+function buildSliders() {
+  const container = document.getElementById('sliders');
+  container.innerHTML = SLIDER_CONFIG.map(s=>`
+    <div class="slider-row">
+      <div class="slider-label">
+        <span>${s.label}</span>
+        <span id="lbl-${s.key}">${s.default}%</span>
+      </div>
+      <input type="range" id="sl-${s.key}" min="0" max="60" value="${s.default}"
+        oninput="onSlider('${s.key}',this.value)">
+    </div>`).join('');
+  updateWeightTotal();
+}
+
+function onSlider(key, val) {
+  document.getElementById('lbl-'+key).textContent = val+'%';
+  const total = SLIDER_CONFIG.reduce((s,sc)=>s+parseInt(document.getElementById('sl-'+sc.key).value),0);
+  const warn = document.getElementById('weight-warn');
+  const tot  = document.getElementById('weight-total-label');
+  tot.textContent = total+'%';
+  if (Math.abs(total-100)>1) { warn.style.display='block'; return; }
+  warn.style.display='none';
+  weights = Object.fromEntries(SLIDER_CONFIG.map(sc=>[sc.key, parseInt(document.getElementById('sl-'+sc.key).value)/100]));
+  renderTable();
+  renderBarChart();
+}
+
+function updateWeightTotal() {
+  const total = SLIDER_CONFIG.reduce((s,sc)=>s+parseInt(document.getElementById('sl-'+sc.key).value),0);
+  document.getElementById('weight-total-label').textContent = total+'%';
+}
+
+function resetWeights() {
+  SLIDER_CONFIG.forEach(s=>{
+    document.getElementById('sl-'+s.key).value = s.default;
+    document.getElementById('lbl-'+s.key).textContent = s.default+'%';
+  });
+  weights = {...DEFAULT_WEIGHTS};
+  document.getElementById('weight-warn').style.display='none';
+  updateWeightTotal();
+  renderTable();
+  renderBarChart();
+}
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+function switchTab(name, el) {
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  el.classList.add('active');
+  if (name==='charts')  { renderBarChart(); renderCsatChart(); populateRadarSelect(); }
+  if (name==='trends')  renderTrendCharts();
+  if (name==='compare') renderCompareTab();
+}
+
+function populateRadarSelect() {
+  const sel = document.getElementById('radar-select');
+  if (!sel) return;
+  const data = getAllScored();
+  sel.innerHTML = data.map(d=>`<option value="${d.uid}">${d.name} (#${d.rank})</option>`).join('');
+  sel.onchange = ()=>renderRadarChartTab(sel.value);
+  renderRadarChartTab(data[0].uid);
+}
+
+// ── Team filter ───────────────────────────────────────────────────────────────
+function setTeam(team, el) {
+  teamFilter = team;
+  document.querySelectorAll('#team-filter-btns .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  renderTable();
+}
+
+// ── Title filter ──────────────────────────────────────────────────────────────
+function setTitle(title, el) {
+  titleFilter = title;
+  document.querySelectorAll('#title-filter-btns .filter-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  const count = title==='all' ? RAW.length : RAW.filter(d=>d.title===title).length;
+  document.getElementById('title-count').textContent =
+    title==='all' ? `All ${RAW.length} engineers` : `${count} engineer${count!==1?'s':''} matching`;
+  renderTable();
+}
+
+// ── Refresh / auto-refresh ────────────────────────────────────────────────────
+function refreshData() {
+  document.getElementById('spinner').style.display='inline-block';
+  document.getElementById('refresh-btn').disabled=true;
+  setTimeout(()=>{
+    renderTable();
+    renderKPIs();
+    document.getElementById('spinner').style.display='none';
+    document.getElementById('refresh-btn').disabled=false;
+    document.getElementById('updated-label').textContent='Data refreshed at '+new Date().toLocaleTimeString();
+  }, 800);
+}
+
+function toggleAutoRefresh() {
+  const on = document.getElementById('auto-refresh-toggle').checked;
+  if (on) {
+    countdownSecs=300;
+    startCountdown();
+    autoRefreshTimer = setInterval(()=>{ countdownSecs=300; refreshData(); }, 300000);
+  } else {
+    clearInterval(autoRefreshTimer);
+    clearInterval(countdownTimer);
+    document.getElementById('countdown').textContent='';
+  }
+}
+
+function startCountdown() {
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(()=>{
+    countdownSecs--;
+    const m=Math.floor(countdownSecs/60), s=countdownSecs%60;
+    document.getElementById('countdown').textContent=`Next refresh in ${m}:${s.toString().padStart(2,'0')}`;
+    if (countdownSecs<=0) countdownSecs=300;
+  },1000);
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+buildSliders();
+renderTable();
+renderKPIs();
+</script>
+</body>
+</html>
