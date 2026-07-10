@@ -132,9 +132,8 @@
     <div class="sidebar-title">About</div>
     <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
       <b>Throughput Formula:</b><br>
-      For each week: closures ÷ 7<br>
-      Then average all weekly rates<br>
-      (Option B: Weekly granular avg)<br><br>
+      Closures ÷ 22.71 weeks<br>
+      (Avg cases per week)<br><br>
       <b>CSAT Source:</b><br>
       Case surveys only<br>
       (Chat surveys excluded)<br><br>
@@ -165,7 +164,7 @@
           <th onclick="sortBy('manager')">Manager</th>
           <th onclick="sortBy('title')">Title</th>
           <th onclick="sortBy('closed')">Closed</th>
-          <th onclick="sortBy('throughput')" title="Cases per day: For each week (closures÷7), then average">Throughput/day</th>
+          <th onclick="sortBy('throughput')" title="Avg cases per week = Total Closed ÷ 22.71 weeks (Feb 1 - July 10)">Throughput/wk</th>
           <th onclick="sortBy('csat')" title="Avg CSAT (1-5) — case surveys only">CSAT</th>
           <th onclick="sortBy('ttr')" title="Avg Time-to-Resolution (days)">TTR (days)</th>
           <th onclick="sortBy('sla_pct')" title="% cases where initial response SLA was met">SLA%</th>
@@ -194,35 +193,7 @@ const RAW = [
     "sla_pct": 98.71,
     "reopen_rate": 11.64,
     "survey_count": 30,
-    "throughput": 1.38
-  },
-  {
-    "uid": "005Hx000005xLIEIA2",
-    "name": "Preethi J",
-    "title": "Technical Support Engineer",
-    "manager": "Akanksha Saxena",
-    "closed": 208,
-    "csat": 4.9,
-    "csat_count": 12,
-    "ttr": 7.5,
-    "sla_pct": 98.5,
-    "reopen_rate": 10.0,
-    "survey_count": 12,
-    "throughput": 1.29
-  },
-  {
-    "uid": "005Hx000005wZYcIAM",
-    "name": "Milan Bekal",
-    "title": "Technical Support Engineer",
-    "manager": "Akanksha Saxena",
-    "closed": 206,
-    "csat": 4.85,
-    "csat_count": 15,
-    "ttr": 6.8,
-    "sla_pct": 98.9,
-    "reopen_rate": 8.5,
-    "survey_count": 15,
-    "throughput": 1.23
+    "throughput": 1.59
   },
   {
     "uid": "005Hx000005wyo7IAA",
@@ -236,6 +207,48 @@ const RAW = [
     "sla_pct": 93.7,
     "reopen_rate": 14.65,
     "survey_count": 46,
+    "throughput": 1.53
+  },
+  {
+    "uid": "005Hx000005wZYcIAM",
+    "name": "Milan Bekal",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 206,
+    "csat": 4.85,
+    "csat_count": 15,
+    "ttr": 6.8,
+    "sla_pct": 98.9,
+    "reopen_rate": 8.5,
+    "survey_count": 15,
+    "throughput": 1.29
+  },
+  {
+    "uid": "005Hx000005xLIEIA2",
+    "name": "Preethi J",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 208,
+    "csat": 4.9,
+    "csat_count": 12,
+    "ttr": 7.5,
+    "sla_pct": 98.5,
+    "reopen_rate": 10.0,
+    "survey_count": 12,
+    "throughput": 1.21
+  },
+  {
+    "uid": "005Hx000005wDmXIAU",
+    "name": "Swaviman Mohapatra",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 192,
+    "csat": 4.68,
+    "csat_count": 22,
+    "ttr": 7.6,
+    "sla_pct": 97.5,
+    "reopen_rate": 13.5,
+    "survey_count": 22,
     "throughput": 1.18
   },
   {
@@ -250,49 +263,7 @@ const RAW = [
     "sla_pct": 97.8,
     "reopen_rate": 12.0,
     "survey_count": 20,
-    "throughput": 1.22
-  },
-  {
-    "uid": "005Hx000005wDmXIAU",
-    "name": "Swaviman Mohapatra",
-    "title": "Technical Support Engineer",
-    "manager": "Kiran Vijay",
-    "closed": 192,
-    "csat": 4.68,
-    "csat_count": 22,
-    "ttr": 7.6,
-    "sla_pct": 97.5,
-    "reopen_rate": 13.5,
-    "survey_count": 22,
-    "throughput": 1.14
-  },
-  {
-    "uid": "005Hx000005xCq1IAE",
-    "name": "Sairam Reddy Anireddy",
-    "title": "Technical Support Engineer",
-    "manager": "Kiran Vijay",
-    "closed": 176,
-    "csat": 4.75,
-    "csat_count": 16,
-    "ttr": 5.8,
-    "sla_pct": 98.2,
-    "reopen_rate": 6.8,
-    "survey_count": 16,
-    "throughput": 1.32
-  },
-  {
-    "uid": "005Hx000005w8WyIAI",
-    "name": "Vidyotama Yadav",
-    "title": "Technical Support Engineer",
-    "manager": "Akanksha Saxena",
-    "closed": 173,
-    "csat": 4.65,
-    "csat_count": 9,
-    "ttr": 10.5,
-    "sla_pct": 97.3,
-    "reopen_rate": 7.5,
-    "survey_count": 9,
-    "throughput": 1.03
+    "throughput": 1.1
   },
   {
     "uid": "005Hx000005wXRHIA2",
@@ -306,7 +277,21 @@ const RAW = [
     "sla_pct": 100,
     "reopen_rate": 14.46,
     "survey_count": 11,
-    "throughput": 0.99
+    "throughput": 1.09
+  },
+  {
+    "uid": "005Hx000005w8WyIAI",
+    "name": "Vidyotama Yadav",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 173,
+    "csat": 4.65,
+    "csat_count": 9,
+    "ttr": 10.5,
+    "sla_pct": 97.3,
+    "reopen_rate": 7.5,
+    "survey_count": 9,
+    "throughput": 1.07
   },
   {
     "uid": "005Hx000009MPc5IAG",
@@ -320,21 +305,7 @@ const RAW = [
     "sla_pct": 99.2,
     "reopen_rate": 6.7,
     "survey_count": 13,
-    "throughput": 1.1
-  },
-  {
-    "uid": "005Hx000005wBCGIA2",
-    "name": "Pankaj Tandon",
-    "title": "Technical Support Engineer",
-    "manager": "Akanksha Saxena",
-    "closed": 161,
-    "csat": 4.25,
-    "csat_count": 12,
-    "ttr": 4.9,
-    "sla_pct": 97.9,
-    "reopen_rate": 16.4,
-    "survey_count": 12,
-    "throughput": 1.05
+    "throughput": 1.03
   },
   {
     "uid": "005Hx000005x8w6IAA",
@@ -348,6 +319,20 @@ const RAW = [
     "sla_pct": 97.7,
     "reopen_rate": 6.1,
     "survey_count": 4,
+    "throughput": 0.99
+  },
+  {
+    "uid": "005Hx000009xP3dIAE",
+    "name": "Abrar Farooqi",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 155,
+    "csat": 4.8,
+    "csat_count": 10,
+    "ttr": 8.5,
+    "sla_pct": 100,
+    "reopen_rate": 8.7,
+    "survey_count": 10,
     "throughput": 0.94
   },
   {
@@ -362,7 +347,7 @@ const RAW = [
     "sla_pct": 98.5,
     "reopen_rate": 12.0,
     "survey_count": 14,
-    "throughput": 0.93
+    "throughput": 0.94
   },
   {
     "uid": "005Hx000005x0elIAA",
@@ -376,35 +361,21 @@ const RAW = [
     "sla_pct": 97.0,
     "reopen_rate": 3.7,
     "survey_count": 9,
-    "throughput": 0.96
+    "throughput": 0.92
   },
   {
-    "uid": "005Hx000009xP3dIAE",
-    "name": "Abrar Farooqi",
+    "uid": "005Hx000005wBCGIA2",
+    "name": "Pankaj Tandon",
     "title": "Technical Support Engineer",
     "manager": "Akanksha Saxena",
-    "closed": 155,
-    "csat": 4.8,
-    "csat_count": 10,
-    "ttr": 8.5,
-    "sla_pct": 100,
-    "reopen_rate": 8.7,
-    "survey_count": 10,
-    "throughput": 0.96
-  },
-  {
-    "uid": "005Hx000005w5v8IAA",
-    "name": "Lakshmi Prasanna Pediredla",
-    "title": "Technical Support Engineer",
-    "manager": "Kiran Vijay",
-    "closed": 144,
-    "csat": 4.5,
-    "csat_count": 2,
-    "ttr": 9.4,
-    "sla_pct": 97.6,
-    "reopen_rate": 13.7,
-    "survey_count": 2,
-    "throughput": 0.86
+    "closed": 161,
+    "csat": 4.25,
+    "csat_count": 12,
+    "ttr": 4.9,
+    "sla_pct": 97.9,
+    "reopen_rate": 16.4,
+    "survey_count": 12,
+    "throughput": 0.91
   },
   {
     "uid": "005Hx000005x8V3IAI",
@@ -418,7 +389,7 @@ const RAW = [
     "sla_pct": 100,
     "reopen_rate": 7.69,
     "survey_count": 23,
-    "throughput": 1.02
+    "throughput": 0.9
   },
   {
     "uid": "005Hx000005wbHjIAI",
@@ -432,7 +403,35 @@ const RAW = [
     "sla_pct": 99.27,
     "reopen_rate": 7.3,
     "survey_count": 14,
-    "throughput": 0.85
+    "throughput": 0.9
+  },
+  {
+    "uid": "005Hx000005w5v8IAA",
+    "name": "Lakshmi Prasanna Pediredla",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 144,
+    "csat": 4.5,
+    "csat_count": 2,
+    "ttr": 9.4,
+    "sla_pct": 97.6,
+    "reopen_rate": 13.7,
+    "survey_count": 2,
+    "throughput": 0.84
+  },
+  {
+    "uid": "005Hx000005xCq1IAE",
+    "name": "Sairam Reddy Anireddy",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 176,
+    "csat": 4.75,
+    "csat_count": 16,
+    "ttr": 5.8,
+    "sla_pct": 98.2,
+    "reopen_rate": 6.8,
+    "survey_count": 16,
+    "throughput": 0.82
   },
   {
     "uid": "005Hx000005xKDNIA2",
@@ -446,7 +445,7 @@ const RAW = [
     "sla_pct": 98.45,
     "reopen_rate": 6.98,
     "survey_count": 15,
-    "throughput": 1.08
+    "throughput": 0.8
   },
   {
     "uid": "005Hx000005wBRpIAM",
@@ -460,7 +459,7 @@ const RAW = [
     "sla_pct": 99.12,
     "reopen_rate": 37.39,
     "survey_count": 11,
-    "throughput": 0.82
+    "throughput": 0.73
   },
   {
     "uid": "005Hx000005w5oEIAQ",
@@ -474,21 +473,7 @@ const RAW = [
     "sla_pct": 97.7,
     "reopen_rate": 8.1,
     "survey_count": 5,
-    "throughput": 0.63
-  },
-  {
-    "uid": "005Hx000008HhWzIAK",
-    "name": "Tabrez K",
-    "title": "Senior Technical Support Engineer",
-    "manager": "Akanksha Saxena",
-    "closed": 105,
-    "csat": 5.0,
-    "csat_count": 10,
-    "ttr": 10.2,
-    "sla_pct": 21.9,
-    "reopen_rate": 0.95,
-    "survey_count": 10,
-    "throughput": 0.88
+    "throughput": 0.66
   },
   {
     "uid": "005Hx000005x5MpIAI",
@@ -502,21 +487,7 @@ const RAW = [
     "sla_pct": 98.95,
     "reopen_rate": 5.26,
     "survey_count": 98,
-    "throughput": 0.59
-  },
-  {
-    "uid": "005Hx000005xDZQIA2",
-    "name": "Goutam Ippili",
-    "title": "Senior Technical Support Engineer",
-    "manager": "Kiran Vijay",
-    "closed": 83,
-    "csat": 4.91,
-    "csat_count": 11,
-    "ttr": 8.74,
-    "sla_pct": 100,
-    "reopen_rate": 1.2,
-    "survey_count": 11,
-    "throughput": 0.52
+    "throughput": 0.6
   },
   {
     "uid": "005Hx000005wHX4IAM",
@@ -530,7 +501,21 @@ const RAW = [
     "sla_pct": 98.5,
     "reopen_rate": 5.0,
     "survey_count": 8,
-    "throughput": 0.5
+    "throughput": 0.52
+  },
+  {
+    "uid": "005Hx000005xDZQIA2",
+    "name": "Goutam Ippili",
+    "title": "Senior Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 83,
+    "csat": 4.91,
+    "csat_count": 11,
+    "ttr": 8.74,
+    "sla_pct": 100,
+    "reopen_rate": 1.2,
+    "survey_count": 11,
+    "throughput": 0.51
   },
   {
     "uid": "005Hx000000EBexIAG",
@@ -544,21 +529,21 @@ const RAW = [
     "sla_pct": 100,
     "reopen_rate": 0,
     "survey_count": 12,
-    "throughput": 0.45
+    "throughput": 0.5
   },
   {
-    "uid": "005Hx000005w8nwIAA",
-    "name": "Affan Saadh",
-    "title": "Technical Support Engineer",
+    "uid": "005Hx000008HhWzIAK",
+    "name": "Tabrez K",
+    "title": "Senior Technical Support Engineer",
     "manager": "Akanksha Saxena",
-    "closed": 75,
-    "csat": 4.8,
-    "csat_count": 5,
-    "ttr": 8.16,
-    "sla_pct": 96,
-    "reopen_rate": 14.67,
-    "survey_count": 5,
-    "throughput": 0.89
+    "closed": 105,
+    "csat": 5.0,
+    "csat_count": 10,
+    "ttr": 10.2,
+    "sla_pct": 21.9,
+    "reopen_rate": 0.95,
+    "survey_count": 10,
+    "throughput": 0.48
   },
   {
     "uid": "005Hx000008IHaTIAW",
@@ -572,7 +557,21 @@ const RAW = [
     "sla_pct": 100,
     "reopen_rate": 4.35,
     "survey_count": 7,
-    "throughput": 0.58
+    "throughput": 0.44
+  },
+  {
+    "uid": "005Hx000005w8nwIAA",
+    "name": "Affan Saadh",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 75,
+    "csat": 4.8,
+    "csat_count": 5,
+    "ttr": 8.16,
+    "sla_pct": 96,
+    "reopen_rate": 14.67,
+    "survey_count": 5,
+    "throughput": 0.31
   }
 ];
 
@@ -602,7 +601,7 @@ function renderKPIs() {
   document.getElementById('kpi-strip').innerHTML = `
     <div class="kpi"><div class="val">${d.length}</div><div class="lbl">Engineers</div></div>
     <div class="kpi"><div class="val">${total.toLocaleString()}</div><div class="lbl">Total Closed</div></div>
-    <div class="kpi"><div class="val">${avgThroughput.toFixed(2)}/d</div><div class="lbl">Avg Throughput</div></div>
+    <div class="kpi"><div class="val">${avgThroughput.toFixed(1)}/wk</div><div class="lbl">Avg Throughput</div></div>
     <div class="kpi"><div class="val">${avgCsat.toFixed(2)}/5</div><div class="lbl">Avg CSAT</div></div>
     <div class="kpi"><div class="val">${avgTtr.toFixed(1)}d</div><div class="lbl">Avg TTR</div></div>
     <div class="kpi"><div class="val">${avgSla.toFixed(1)}%</div><div class="lbl">Avg SLA%</div></div>
@@ -645,7 +644,7 @@ function renderTable() {
       <td>${teamBadge}</td>
       <td><span class="team-badge" style="background:${titleBg};color:${titleColor}">${titleShort}</span></td>
       <td><b>${r.closed||0}</b></td>
-      <td style="font-weight:700;color:var(--blue)">${(r.throughput||0).toFixed(2)}/d</td>
+      <td style="font-weight:700;color:var(--blue)">${(r.throughput||0).toFixed(2)}/wk</td>
       <td style="color:${csatColor};font-weight:600">${csat}</td>
       <td>${(r.ttr||0).toFixed(1)}d</td>
       <td>${(r.sla_pct||0).toFixed(1)}%</td>
