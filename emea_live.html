@@ -132,8 +132,9 @@
     <div class="sidebar-title">About</div>
     <div style="font-size:.72rem;color:var(--muted);line-height:1.6">
       <b>Throughput Formula:</b><br>
-      Closures ÷ 22.71 weeks<br>
-      (Avg cases per week)<br><br>
+      For each week: closures ÷ 7<br>
+      Then average all weekly rates<br>
+      (Option B: Weekly granular avg)<br><br>
       <b>CSAT Source:</b><br>
       Case surveys only<br>
       (Chat surveys excluded)<br><br>
@@ -164,7 +165,7 @@
           <th onclick="sortBy('manager')">Manager</th>
           <th onclick="sortBy('title')">Title</th>
           <th onclick="sortBy('closed')">Closed</th>
-          <th onclick="sortBy('throughput')" title="Avg cases per week = Total Closed ÷ 22.71 weeks (Feb 1 - July 10)">Throughput/wk</th>
+          <th onclick="sortBy('throughput')" title="Cases per day: For each week (closures÷7), then average">Throughput/day</th>
           <th onclick="sortBy('csat')" title="Avg CSAT (1-5) — case surveys only">CSAT</th>
           <th onclick="sortBy('ttr')" title="Avg Time-to-Resolution (days)">TTR (days)</th>
           <th onclick="sortBy('sla_pct')" title="% cases where initial response SLA was met">SLA%</th>
@@ -180,7 +181,400 @@
 
 <script>
 // ── Raw data placeholder ──────────────────────────────────────────────────────
-const RAW = [   {     "uid": "005Hx000005wmtsIAA",     "name": "Bajrang Lal Godhara",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 232,     "csat": 4.43,     "csat_count": 30,     "ttr": 8.06,     "sla_pct": 98.71,     "reopen_rate": 11.64,     "survey_count": 30,     "throughput": 10.22   },   {     "uid": "005Hx000005xLIEIA2",     "name": "Preethi J",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 208,     "csat": 4.9,     "csat_count": 12,     "ttr": 7.5,     "sla_pct": 98.5,     "reopen_rate": 10.0,     "survey_count": 12,     "throughput": 9.16   },   {     "uid": "005Hx000005wZYcIAM",     "name": "Milan Bekal",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 206,     "csat": 4.85,     "csat_count": 15,     "ttr": 6.8,     "sla_pct": 98.9,     "reopen_rate": 8.5,     "survey_count": 15,     "throughput": 9.07   },   {     "uid": "005Hx000005wyo7IAA",     "name": "Dinesh Gunani",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 198,     "csat": 4.49,     "csat_count": 45,     "ttr": 5.3,     "sla_pct": 93.7,     "reopen_rate": 14.65,     "survey_count": 46,     "throughput": 8.72   },   {     "uid": "005Hx000009VLKjIAO",     "name": "Siddarth K",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 197,     "csat": 4.75,     "csat_count": 20,     "ttr": 9.2,     "sla_pct": 97.8,     "reopen_rate": 12.0,     "survey_count": 20,     "throughput": 8.67   },   {     "uid": "005Hx000005wDmXIAU",     "name": "Swaviman Mohapatra",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 192,     "csat": 4.68,     "csat_count": 22,     "ttr": 7.6,     "sla_pct": 97.5,     "reopen_rate": 13.5,     "survey_count": 22,     "throughput": 8.45   },   {     "uid": "005Hx000005xCq1IAE",     "name": "Sairam Reddy Anireddy",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 176,     "csat": 4.75,     "csat_count": 16,     "ttr": 5.8,     "sla_pct": 98.2,     "reopen_rate": 6.8,     "survey_count": 16,     "throughput": 7.75   },   {     "uid": "005Hx000005w8WyIAI",     "name": "Vidyotama Yadav",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 173,     "csat": 4.65,     "csat_count": 9,     "ttr": 10.5,     "sla_pct": 97.3,     "reopen_rate": 7.5,     "survey_count": 9,     "throughput": 7.62   },   {     "uid": "005Hx000005wXRHIA2",     "name": "Ajay Saravanan Rajan",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 166,     "csat": 4.55,     "csat_count": 11,     "ttr": 8.97,     "sla_pct": 100,     "reopen_rate": 14.46,     "survey_count": 11,     "throughput": 7.31   },   {     "uid": "005Hx000009MPc5IAG",     "name": "Harsh Tripathy",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 162,     "csat": 4.78,     "csat_count": 13,     "ttr": 6.5,     "sla_pct": 99.2,     "reopen_rate": 6.7,     "survey_count": 13,     "throughput": 7.13   },   {     "uid": "005Hx000005wBCGIA2",     "name": "Pankaj Tandon",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 161,     "csat": 4.25,     "csat_count": 12,     "ttr": 4.9,     "sla_pct": 97.9,     "reopen_rate": 16.4,     "survey_count": 12,     "throughput": 7.09   },   {     "uid": "005Hx000005x8w6IAA",     "name": "Sirisha Cherrikallimal",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 158,     "csat": 3.5,     "csat_count": 4,     "ttr": 7.7,     "sla_pct": 97.7,     "reopen_rate": 6.1,     "survey_count": 4,     "throughput": 6.96   },   {     "uid": "005Hx000005wWoeIAE",     "name": "Naga Pulavarty",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 156,     "csat": 4.64,     "csat_count": 14,     "ttr": 5.5,     "sla_pct": 98.5,     "reopen_rate": 12.0,     "survey_count": 14,     "throughput": 6.87   },   {     "uid": "005Hx000005x0elIAA",     "name": "RESHMA G",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 155,     "csat": 4.78,     "csat_count": 9,     "ttr": 7.2,     "sla_pct": 97.0,     "reopen_rate": 3.7,     "survey_count": 9,     "throughput": 6.83   },   {     "uid": "005Hx000009xP3dIAE",     "name": "Abrar Farooqi",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 155,     "csat": 4.8,     "csat_count": 10,     "ttr": 8.5,     "sla_pct": 100,     "reopen_rate": 8.7,     "survey_count": 10,     "throughput": 6.83   },   {     "uid": "005Hx000005w5v8IAA",     "name": "Lakshmi Prasanna Pediredla",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 144,     "csat": 4.5,     "csat_count": 2,     "ttr": 9.4,     "sla_pct": 97.6,     "reopen_rate": 13.7,     "survey_count": 2,     "throughput": 6.34   },   {     "uid": "005Hx000005x8V3IAI",     "name": "Satya Santosh Varma Jampana",     "title": "Principal Technical Support Engineer",     "manager": "Prakash Venugopal",     "closed": 143,     "csat": 4.96,     "csat_count": 23,     "ttr": 12.96,     "sla_pct": 100,     "reopen_rate": 7.69,     "survey_count": 23,     "throughput": 6.3   },   {     "uid": "005Hx000005wbHjIAI",     "name": "Sumit Kumar",     "title": "Senior Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 137,     "csat": 4.57,     "csat_count": 14,     "ttr": 84.3,     "sla_pct": 99.27,     "reopen_rate": 7.3,     "survey_count": 14,     "throughput": 6.03   },   {     "uid": "005Hx000005xKDNIA2",     "name": "Clifford Dsa",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 129,     "csat": 4.8,     "csat_count": 15,     "ttr": 6.18,     "sla_pct": 98.45,     "reopen_rate": 6.98,     "survey_count": 15,     "throughput": 5.68   },   {     "uid": "005Hx000005wBRpIAM",     "name": "Ajay Chada",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 115,     "csat": 4.82,     "csat_count": 11,     "ttr": 13.5,     "sla_pct": 99.12,     "reopen_rate": 37.39,     "survey_count": 11,     "throughput": 5.06   },   {     "uid": "005Hx000005w5oEIAQ",     "name": "Krishna Sai Goud Ramapuram",     "title": "Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 106,     "csat": 4.8,     "csat_count": 5,     "ttr": 9.9,     "sla_pct": 97.7,     "reopen_rate": 8.1,     "survey_count": 5,     "throughput": 4.67   },   {     "uid": "005Hx000008HhWzIAK",     "name": "Tabrez K",     "title": "Senior Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 105,     "csat": 5.0,     "csat_count": 10,     "ttr": 10.2,     "sla_pct": 21.9,     "reopen_rate": 0.95,     "survey_count": 10,     "throughput": 4.62   },   {     "uid": "005Hx000005x5MpIAI",     "name": "Ajit Behera",     "title": "Principal Technical Support Engineer",     "manager": "Prakash Venugopal",     "closed": 95,     "csat": 0,     "csat_count": 0,     "ttr": 32.33,     "sla_pct": 98.95,     "reopen_rate": 5.26,     "survey_count": 98,     "throughput": 4.18   },   {     "uid": "005Hx000005xDZQIA2",     "name": "Goutam Ippili",     "title": "Senior Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 83,     "csat": 4.91,     "csat_count": 11,     "ttr": 8.74,     "sla_pct": 100,     "reopen_rate": 1.2,     "survey_count": 11,     "throughput": 3.65   },   {     "uid": "005Hx000005wHX4IAM",     "name": "Sandeep Mahale",     "title": "Principal Technical Support Engineer",     "manager": "Prakash Venugopal",     "closed": 77,     "csat": 4.85,     "csat_count": 8,     "ttr": 11.2,     "sla_pct": 98.5,     "reopen_rate": 5.0,     "survey_count": 8,     "throughput": 3.39   },   {     "uid": "005Hx000000EBexIAG",     "name": "Jagadeesh Reddy Mandipalli",     "title": "Senior Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 76,     "csat": 4.5,     "csat_count": 12,     "ttr": 15.16,     "sla_pct": 100,     "reopen_rate": 0,     "survey_count": 12,     "throughput": 3.35   },   {     "uid": "005Hx000005w8nwIAA",     "name": "Affan Saadh",     "title": "Technical Support Engineer",     "manager": "Akanksha Saxena",     "closed": 75,     "csat": 4.8,     "csat_count": 5,     "ttr": 8.16,     "sla_pct": 96,     "reopen_rate": 14.67,     "survey_count": 5,     "throughput": 3.3   },   {     "uid": "005Hx000008IHaTIAW",     "name": "Srikanth Edam",     "title": "Senior Technical Support Engineer",     "manager": "Kiran Vijay",     "closed": 69,     "csat": 4.857,     "csat_count": 7,     "ttr": 8.48,     "sla_pct": 100,     "reopen_rate": 4.35,     "survey_count": 7,     "throughput": 3.04   } ];
+const RAW = [
+  {
+    "uid": "005Hx000005wmtsIAA",
+    "name": "Bajrang Lal Godhara",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 232,
+    "csat": 4.43,
+    "csat_count": 30,
+    "ttr": 8.06,
+    "sla_pct": 98.71,
+    "reopen_rate": 11.64,
+    "survey_count": 30,
+    "throughput": 1.38
+  },
+  {
+    "uid": "005Hx000005xLIEIA2",
+    "name": "Preethi J",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 208,
+    "csat": 4.9,
+    "csat_count": 12,
+    "ttr": 7.5,
+    "sla_pct": 98.5,
+    "reopen_rate": 10.0,
+    "survey_count": 12,
+    "throughput": 1.29
+  },
+  {
+    "uid": "005Hx000005wZYcIAM",
+    "name": "Milan Bekal",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 206,
+    "csat": 4.85,
+    "csat_count": 15,
+    "ttr": 6.8,
+    "sla_pct": 98.9,
+    "reopen_rate": 8.5,
+    "survey_count": 15,
+    "throughput": 1.23
+  },
+  {
+    "uid": "005Hx000005wyo7IAA",
+    "name": "Dinesh Gunani",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 198,
+    "csat": 4.49,
+    "csat_count": 45,
+    "ttr": 5.3,
+    "sla_pct": 93.7,
+    "reopen_rate": 14.65,
+    "survey_count": 46,
+    "throughput": 1.18
+  },
+  {
+    "uid": "005Hx000009VLKjIAO",
+    "name": "Siddarth K",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 197,
+    "csat": 4.75,
+    "csat_count": 20,
+    "ttr": 9.2,
+    "sla_pct": 97.8,
+    "reopen_rate": 12.0,
+    "survey_count": 20,
+    "throughput": 1.22
+  },
+  {
+    "uid": "005Hx000005wDmXIAU",
+    "name": "Swaviman Mohapatra",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 192,
+    "csat": 4.68,
+    "csat_count": 22,
+    "ttr": 7.6,
+    "sla_pct": 97.5,
+    "reopen_rate": 13.5,
+    "survey_count": 22,
+    "throughput": 1.14
+  },
+  {
+    "uid": "005Hx000005xCq1IAE",
+    "name": "Sairam Reddy Anireddy",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 176,
+    "csat": 4.75,
+    "csat_count": 16,
+    "ttr": 5.8,
+    "sla_pct": 98.2,
+    "reopen_rate": 6.8,
+    "survey_count": 16,
+    "throughput": 1.32
+  },
+  {
+    "uid": "005Hx000005w8WyIAI",
+    "name": "Vidyotama Yadav",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 173,
+    "csat": 4.65,
+    "csat_count": 9,
+    "ttr": 10.5,
+    "sla_pct": 97.3,
+    "reopen_rate": 7.5,
+    "survey_count": 9,
+    "throughput": 1.03
+  },
+  {
+    "uid": "005Hx000005wXRHIA2",
+    "name": "Ajay Saravanan Rajan",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 166,
+    "csat": 4.55,
+    "csat_count": 11,
+    "ttr": 8.97,
+    "sla_pct": 100,
+    "reopen_rate": 14.46,
+    "survey_count": 11,
+    "throughput": 0.99
+  },
+  {
+    "uid": "005Hx000009MPc5IAG",
+    "name": "Harsh Tripathy",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 162,
+    "csat": 4.78,
+    "csat_count": 13,
+    "ttr": 6.5,
+    "sla_pct": 99.2,
+    "reopen_rate": 6.7,
+    "survey_count": 13,
+    "throughput": 1.1
+  },
+  {
+    "uid": "005Hx000005wBCGIA2",
+    "name": "Pankaj Tandon",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 161,
+    "csat": 4.25,
+    "csat_count": 12,
+    "ttr": 4.9,
+    "sla_pct": 97.9,
+    "reopen_rate": 16.4,
+    "survey_count": 12,
+    "throughput": 1.05
+  },
+  {
+    "uid": "005Hx000005x8w6IAA",
+    "name": "Sirisha Cherrikallimal",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 158,
+    "csat": 3.5,
+    "csat_count": 4,
+    "ttr": 7.7,
+    "sla_pct": 97.7,
+    "reopen_rate": 6.1,
+    "survey_count": 4,
+    "throughput": 0.94
+  },
+  {
+    "uid": "005Hx000005wWoeIAE",
+    "name": "Naga Pulavarty",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 156,
+    "csat": 4.64,
+    "csat_count": 14,
+    "ttr": 5.5,
+    "sla_pct": 98.5,
+    "reopen_rate": 12.0,
+    "survey_count": 14,
+    "throughput": 0.93
+  },
+  {
+    "uid": "005Hx000005x0elIAA",
+    "name": "RESHMA G",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 155,
+    "csat": 4.78,
+    "csat_count": 9,
+    "ttr": 7.2,
+    "sla_pct": 97.0,
+    "reopen_rate": 3.7,
+    "survey_count": 9,
+    "throughput": 0.96
+  },
+  {
+    "uid": "005Hx000009xP3dIAE",
+    "name": "Abrar Farooqi",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 155,
+    "csat": 4.8,
+    "csat_count": 10,
+    "ttr": 8.5,
+    "sla_pct": 100,
+    "reopen_rate": 8.7,
+    "survey_count": 10,
+    "throughput": 0.96
+  },
+  {
+    "uid": "005Hx000005w5v8IAA",
+    "name": "Lakshmi Prasanna Pediredla",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 144,
+    "csat": 4.5,
+    "csat_count": 2,
+    "ttr": 9.4,
+    "sla_pct": 97.6,
+    "reopen_rate": 13.7,
+    "survey_count": 2,
+    "throughput": 0.86
+  },
+  {
+    "uid": "005Hx000005x8V3IAI",
+    "name": "Satya Santosh Varma Jampana",
+    "title": "Principal Technical Support Engineer",
+    "manager": "Prakash Venugopal",
+    "closed": 143,
+    "csat": 4.96,
+    "csat_count": 23,
+    "ttr": 12.96,
+    "sla_pct": 100,
+    "reopen_rate": 7.69,
+    "survey_count": 23,
+    "throughput": 1.02
+  },
+  {
+    "uid": "005Hx000005wbHjIAI",
+    "name": "Sumit Kumar",
+    "title": "Senior Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 137,
+    "csat": 4.57,
+    "csat_count": 14,
+    "ttr": 84.3,
+    "sla_pct": 99.27,
+    "reopen_rate": 7.3,
+    "survey_count": 14,
+    "throughput": 0.85
+  },
+  {
+    "uid": "005Hx000005xKDNIA2",
+    "name": "Clifford Dsa",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 129,
+    "csat": 4.8,
+    "csat_count": 15,
+    "ttr": 6.18,
+    "sla_pct": 98.45,
+    "reopen_rate": 6.98,
+    "survey_count": 15,
+    "throughput": 1.08
+  },
+  {
+    "uid": "005Hx000005wBRpIAM",
+    "name": "Ajay Chada",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 115,
+    "csat": 4.82,
+    "csat_count": 11,
+    "ttr": 13.5,
+    "sla_pct": 99.12,
+    "reopen_rate": 37.39,
+    "survey_count": 11,
+    "throughput": 0.82
+  },
+  {
+    "uid": "005Hx000005w5oEIAQ",
+    "name": "Krishna Sai Goud Ramapuram",
+    "title": "Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 106,
+    "csat": 4.8,
+    "csat_count": 5,
+    "ttr": 9.9,
+    "sla_pct": 97.7,
+    "reopen_rate": 8.1,
+    "survey_count": 5,
+    "throughput": 0.63
+  },
+  {
+    "uid": "005Hx000008HhWzIAK",
+    "name": "Tabrez K",
+    "title": "Senior Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 105,
+    "csat": 5.0,
+    "csat_count": 10,
+    "ttr": 10.2,
+    "sla_pct": 21.9,
+    "reopen_rate": 0.95,
+    "survey_count": 10,
+    "throughput": 0.88
+  },
+  {
+    "uid": "005Hx000005x5MpIAI",
+    "name": "Ajit Behera",
+    "title": "Principal Technical Support Engineer",
+    "manager": "Prakash Venugopal",
+    "closed": 95,
+    "csat": 0,
+    "csat_count": 0,
+    "ttr": 32.33,
+    "sla_pct": 98.95,
+    "reopen_rate": 5.26,
+    "survey_count": 98,
+    "throughput": 0.59
+  },
+  {
+    "uid": "005Hx000005xDZQIA2",
+    "name": "Goutam Ippili",
+    "title": "Senior Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 83,
+    "csat": 4.91,
+    "csat_count": 11,
+    "ttr": 8.74,
+    "sla_pct": 100,
+    "reopen_rate": 1.2,
+    "survey_count": 11,
+    "throughput": 0.52
+  },
+  {
+    "uid": "005Hx000005wHX4IAM",
+    "name": "Sandeep Mahale",
+    "title": "Principal Technical Support Engineer",
+    "manager": "Prakash Venugopal",
+    "closed": 77,
+    "csat": 4.85,
+    "csat_count": 8,
+    "ttr": 11.2,
+    "sla_pct": 98.5,
+    "reopen_rate": 5.0,
+    "survey_count": 8,
+    "throughput": 0.5
+  },
+  {
+    "uid": "005Hx000000EBexIAG",
+    "name": "Jagadeesh Reddy Mandipalli",
+    "title": "Senior Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 76,
+    "csat": 4.5,
+    "csat_count": 12,
+    "ttr": 15.16,
+    "sla_pct": 100,
+    "reopen_rate": 0,
+    "survey_count": 12,
+    "throughput": 0.45
+  },
+  {
+    "uid": "005Hx000005w8nwIAA",
+    "name": "Affan Saadh",
+    "title": "Technical Support Engineer",
+    "manager": "Akanksha Saxena",
+    "closed": 75,
+    "csat": 4.8,
+    "csat_count": 5,
+    "ttr": 8.16,
+    "sla_pct": 96,
+    "reopen_rate": 14.67,
+    "survey_count": 5,
+    "throughput": 0.89
+  },
+  {
+    "uid": "005Hx000008IHaTIAW",
+    "name": "Srikanth Edam",
+    "title": "Senior Technical Support Engineer",
+    "manager": "Kiran Vijay",
+    "closed": 69,
+    "csat": 4.857,
+    "csat_count": 7,
+    "ttr": 8.48,
+    "sla_pct": 100,
+    "reopen_rate": 4.35,
+    "survey_count": 7,
+    "throughput": 0.58
+  }
+];
 
 let managerFilter = 'all';
 let titleFilter = 'all';
@@ -208,7 +602,7 @@ function renderKPIs() {
   document.getElementById('kpi-strip').innerHTML = `
     <div class="kpi"><div class="val">${d.length}</div><div class="lbl">Engineers</div></div>
     <div class="kpi"><div class="val">${total.toLocaleString()}</div><div class="lbl">Total Closed</div></div>
-    <div class="kpi"><div class="val">${avgThroughput.toFixed(1)}/wk</div><div class="lbl">Avg Throughput</div></div>
+    <div class="kpi"><div class="val">${avgThroughput.toFixed(2)}/d</div><div class="lbl">Avg Throughput</div></div>
     <div class="kpi"><div class="val">${avgCsat.toFixed(2)}/5</div><div class="lbl">Avg CSAT</div></div>
     <div class="kpi"><div class="val">${avgTtr.toFixed(1)}d</div><div class="lbl">Avg TTR</div></div>
     <div class="kpi"><div class="val">${avgSla.toFixed(1)}%</div><div class="lbl">Avg SLA%</div></div>
@@ -251,7 +645,7 @@ function renderTable() {
       <td>${teamBadge}</td>
       <td><span class="team-badge" style="background:${titleBg};color:${titleColor}">${titleShort}</span></td>
       <td><b>${r.closed||0}</b></td>
-      <td style="font-weight:700;color:var(--blue)">${(r.throughput||0).toFixed(2)}/wk</td>
+      <td style="font-weight:700;color:var(--blue)">${(r.throughput||0).toFixed(2)}/d</td>
       <td style="color:${csatColor};font-weight:600">${csat}</td>
       <td>${(r.ttr||0).toFixed(1)}d</td>
       <td>${(r.sla_pct||0).toFixed(1)}%</td>
