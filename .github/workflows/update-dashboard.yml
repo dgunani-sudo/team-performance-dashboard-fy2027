@@ -1,0 +1,51 @@
+name: Update EMEA Dashboard Data
+
+on:
+  schedule:
+    # Run every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Update dashboard data
+        env:
+          SF_USERNAME: ${{ secrets.SF_USERNAME }}
+          SF_PASSWORD: ${{ secrets.SF_PASSWORD }}
+          SF_INSTANCE_URL: ${{ secrets.SF_INSTANCE_URL }}
+          UPDATE_TIMESTAMP: ${{ github.event.repository.updated_at }}
+        run: |
+          # This workflow updates dashboard data from Salesforce
+          # Prerequisites:
+          # 1. Add SF_USERNAME, SF_PASSWORD, SF_INSTANCE_URL as repository secrets
+          # 2. Install Salesforce CLI or use REST API
+          # 3. Query OrgCS dashboard data
+          # 4. Regenerate emea_live.html with fresh data
+
+          echo "Dashboard data update triggered"
+          echo "Timestamp: ${UPDATE_TIMESTAMP}"
+
+      - name: Commit and push if changed
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+          if [[ -n $(git status --porcelain) ]]; then
+            git add data/ emea_live.html
+            COMMIT_DATE=$(date +%Y-%m-%d\ %H:%M)
+            git commit -m "chore: auto-update dashboard data ${COMMIT_DATE}"
+            git push
+          else
+            echo "No changes to commit"
+          fi
