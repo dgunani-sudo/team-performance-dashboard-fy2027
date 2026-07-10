@@ -23,7 +23,7 @@ Interactive ranking dashboard for India EMEA Tableau Technical Support engineers
 | Metric | Description | Formula |
 |--------|-------------|---------|
 | **Closed Cases** | Total cases closed in FY2027 | COUNT(Closed) |
-| **Throughput/week** | Cases closed per week | **Closed ÷ 7** |
+| **Throughput/day** | Cases closed per day (weekly granular) | **Option B**: For each week → closures ÷ 7, then average |
 | **CSAT** | Customer Satisfaction (case surveys only) | AVG(Rating 1-5) |
 | **TTR** | Time to Resolution | AVG(Days to close) |
 | **SLA%** | Initial response SLA compliance | % Met |
@@ -32,7 +32,7 @@ Interactive ranking dashboard for India EMEA Tableau Technical Support engineers
 
 ### 🎯 Key Features
 
-- ✅ **Throughput Formula**: Closures ÷ 7 (cases per week)
+- ✅ **Throughput Formula (Option B)**: For each week, calculate (closures ÷ 7), then average all weekly rates. This captures weekly variation in closure patterns rather than a simple overall average.
 - ✅ **CSAT Source**: Case surveys only (chat surveys excluded)
 - ✅ **Multi-level filtering**: By manager and title
 - ✅ **Data Source**: Salesforce OrgCS Dashboard `01ZHx000000kpvZMAQ`
